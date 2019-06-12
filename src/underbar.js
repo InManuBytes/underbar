@@ -68,8 +68,8 @@
     var result = -1;
 
     _.each(array, function(item, index) {
-      if (item === target && result === -1) {
-        result = index;
+      if (item === target && result === -1) { //the -1 makes sure we only get the first instance of the search
+        result = index; //saves the index of the first instance
       }
     });
 
@@ -78,16 +78,47 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    let passTest = [];
+    _.each(collection, (item, index) => {
+      if (test(item)){
+        passTest.push(item);
+      }
+    });
+    return passTest;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    let testFalse = function(item){return test(item) === false};
+    return _.filter(collection,testFalse);
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    let duplicateFree = [];
+    //keep an object to keep track of items as we check them
+    let checkForDups = {};
+    _.each(array, (item, index) => {
+      //keep a variable that is either equal to the item in the array or 
+      //the iterated value if a sorted list and an iterator are passed as arguments
+      let value = (isSorted && iterator) ? iterator(item, index, array) : item;
+      if (checkForDups[value] === undefined){
+      //for every unique value save in the checkForDups obj with its item 
+        checkForDups[value] = item; 
+        //and push the actual item into the resulting array
+        duplicateFree.push(item);
+        /*this if part of the code is the reason _.uniq generates 
+                _.uniq([1, 2, 2, 3, 4, 4],true,iterator) = [1,2] 
+        when the iterator checks a truth statement like
+                iterator = function(value) {return value === 1;};
+        If we looked at the object that keeps track we'd see
+                checkForDups = {true: 1,false: 2} 
+        since true and false are the only unique values that are generated*/
+      }
+    });
+    return duplicateFree;
   };
 
 
