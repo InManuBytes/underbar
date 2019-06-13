@@ -215,9 +215,9 @@
     //iterator returns true/false
     return _.reduce(collection,(passesTruthTest, item) => {
       if (!passesTruthTest) {
-        return false;
+        return false; //as soon as one test doesn't pass should just return false
       }
-      return (!!iterator) ? !!iterator(item): !!item;
+      return (!!iterator) ? !!iterator(item): !!item; //makes sure it works when no callback is provided
     },true);
   };
 
@@ -225,6 +225,10 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    // some passing the tests is just another way of saying not all are failing
+    return _.every(collection, (item) => {
+      return ((!!iterator)? !!iterator(item) === false : !!item === false);
+    }) ? false : true;     // if all are false .some should return false otherwise it's true
   };
 
 
