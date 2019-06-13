@@ -178,7 +178,7 @@
     let index = 0; 
     //get an array of the keys if the collection passed is an object
     let keys = !Array.isArray(collection) && Object.keys(collection);
-    //get the length of the collection, if it's an array, or the keys array if it's an object
+    //get the length of the collection, if it's an array, or the keys-array if it's an object
     let length = (keys || collection).length;
     //if no value is passed to the accumulator set it to the first element/key and 
     //increase the index so that the first element is never passed to the iterator
@@ -189,6 +189,7 @@
     //loop through the collection and call the iterator for each item 
     //with the accumulator as the return value of the previous iterator call
     for (index; index<length;index++){
+      //allows us to loop both through an array or an object by its keys
       let currentKey = keys ? keys[index] : index;
       accumulator = iterator(accumulator,collection[currentKey]);
     }
@@ -211,6 +212,13 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    //iterator returns true/false
+    return _.reduce(collection,(passesTruthTest, item) => {
+      if (!passesTruthTest) {
+        return false;
+      }
+      return (!!iterator) ? !!iterator(item): !!item;
+    },true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
