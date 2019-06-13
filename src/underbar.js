@@ -174,13 +174,23 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    let i = 0;
+    //set the initial value to the first element
+    let index = 0; 
+    //get an array of the keys if the collection passed is an object
+    let keys = !Array.isArray(collection) && Object.keys(collection);
+    //get the length of the collection, if it's an array, or the keys array if it's an object
+    let length = (keys || collection).length;
+    //if no value is passed to the accumulator set it to the first element/key and 
+    //increase the index so that the first element is never passed to the iterator
     if (accumulator === undefined){
-      accumulator = collection[0];
-      i++;
-    };
-    for (i; i<collection.length;i++){
-      accumulator = iterator(accumulator, collection[i]);
+      accumulator = collection[keys ? keys[index] : index];
+      index ++;
+    }
+    //loop through the collection and call the iterator for each item 
+    //with the accumulator as the return value of the previous iterator call
+    for (index; index<length;index++){
+      let currentKey = keys ? keys[index] : index;
+      accumulator = iterator(accumulator,collection[currentKey]);
     }
     return accumulator;
   };
