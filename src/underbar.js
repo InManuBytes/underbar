@@ -315,6 +315,7 @@
   _.memoize = function(func) {
     let resultsCache = {};
     return function(){
+      //make the keys easier to access
       let key = JSON.stringify(arguments);
       if(resultsCache[key]===undefined){
         resultsCache[key] = func.apply(this,arguments);
@@ -330,6 +331,7 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    //since we just need to pass the arguments after func and wait then we exclude those
     let args = Array.prototype.slice.call(arguments,2)
     return setTimeout(function() {
       return func.apply(this,args);
@@ -348,6 +350,32 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    let shuffledArray = array.slice();
+    //we'll use the Durstenfield algorith to randomize the array's contents
+    //For more see: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+    /**this algorithm reduces time complexity from n^2 to n and says:
+     * To shuffle an array a of n elements (indices 0..n-1):
+     * for i from n−1 downto 1 do  
+     * j ← random integer such that 0 ≤ j ≤ i
+     * exchange a[j] and a[i]
+     * 
+     * It basically randomly picks an element and excludes it from the next draw
+     * which is why you start with i=n-1
+     */
+    for (let i =shuffledArray.length-1;i>0;i--){
+      /*** Math.floor() returns the largest integer less than or equal to a given number
+      Math.random() returns a floating-point pseudo-random (not crypto secure) number < 1 and >= 0,
+      which you can then scale to the desired range
+      so we can use both to generate a random index betwen 1 and i (inclusive) by multiplying: 
+      Math.random()*(max-min+1) = Math.random()*(i-0+1)
+      */
+      let j = Math.floor(Math.random()*(i+1)); //pick a random index -> item
+      let tempItem = shuffledArray[i]; //hold the original item
+      shuffledArray[i] = shuffledArray[j]; //exchange the index
+      shuffledArray[j] = tempItem; //reassign
+
+    }
+    return shuffledArray;
   };
 
 
